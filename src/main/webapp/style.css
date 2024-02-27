@@ -1,0 +1,101 @@
+.container {
+  width: 100%;
+  height: 739px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url("img/background.jpg");
+  background-attachment: local;
+}
+.box {
+  margin-bottom: 50px;
+  max-height: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login_form {
+  background-color: aliceblue;
+  max-width: 250px;
+  max-height: 300px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  padding: 20px;
+  padding-bottom: 3px;
+  /* margin: 20px; */
+  border: 2px solid #000;
+  max-height: 350px;
+  max-width: 600px;
+}
+.button_box {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  /* border: 1px solid red; */
+  padding-bottom: 8px;
+}
+.sign_in_box {
+  margin-top: 6px;
+  display: flex;
+  align-items: baseline;
+}
+.form-text {
+  padding-right: 5px;
+}
+.all_cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.card {
+  margin-top: 15px;
+  margin-left: 10px;
+  border: 2px solid black;
+  border-radius: 10px;
+}
+#main_container {
+  display: flex; /* активирует flexbox для дочерних элементов */
+  flex-wrap: nowrap; /* предотвращает перенос элементов на новую строку */
+  overflow-x: auto; /* добавляет прокрутку по горизонтали при необходимости */
+}
+
+/* Стили для внутренней части навигационной панели */
+.container-fluid {
+  display: flex; /* тоже использует flexbox для выравнивания внутренних элементов */
+  justify-content: space-between; /* распределяет пространство между элементами */
+  align-items: center; /* центрирует элементы по вертикали */
+  flex-grow: 1; /* элемент растянется на доступное пространство */
+}
+
+/* Стилизация для элементов формы */
+form.d-flex {
+  display: flex; /* применяет flexbox для формы и её элементов */
+}
+
+/* Если вы хотите ограничить ширину инпута и кнопки,
+   чтобы они не сжимались слишком сильно при уменьшении окна */
+input[type="search"],
+button {
+  min-width: 70px; /* устанавливает минимальную ширину */
+}
+#user_name {
+  white-space: nowrap; /* предотвращает перенос текста в кнопке */
+  min-width: 150px;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+/* Стили для выхода пользователя */
+#sign_out {
+  white-space: nowrap; /* предотвращает перенос текста в кнопке */
+  min-width: 80px
+}
+#right{
+  display: flex; /* активирует flexbox для дочерних элементов */
+  flex-wrap: nowrap; /* предотвращает перенос элементов на новую строку */
+}
+.errors {
+  color: crimson;
+}
