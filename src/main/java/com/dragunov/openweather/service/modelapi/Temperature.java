@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -14,9 +13,11 @@ import java.math.BigDecimal;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Temperature {
     @JsonProperty("temp")
-    Double temperature;
+    double temperature;
     @JsonProperty("temp_min")
-    Double tempMin;
+    double tempMin;
     @JsonProperty("temp_max")
-    Double tempMax;
+    double tempMax;
+    @JsonProperty("humidity")
+    int humidity;
 }

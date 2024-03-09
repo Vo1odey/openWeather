@@ -33,4 +33,17 @@ public class Validator {
             return localDateTimeFromDB.isAfter(currentTime);
         }
     }
+    public static String spaceReplacePlusForApi(String name){
+        String trimmed = name.trim();
+        char[] charsFromTrimmed = trimmed.toCharArray();
+        StringBuilder builder = new StringBuilder();
+        for (char chars : charsFromTrimmed) {
+            if (chars == ' '){
+                chars = '+';
+            }
+            builder.append(chars);
+        }
+        return builder.toString();
+    }
 }
+

@@ -2,6 +2,7 @@ package com.dragunov.openweather.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 
 
 import java.util.ArrayList;
@@ -22,16 +23,18 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "login", unique = true, length = 6)
+    @Column(name = "login", unique = true, length = 64)
     private String login;
 
-    @Column(name = "password", length = 6)
+    @Column(name = "password", length = 64)
     private String password;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY
+            ,mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Location> locations;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY
+            ,mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sessions> sessions;
     public User(String login, String password) {
         this.login = login;

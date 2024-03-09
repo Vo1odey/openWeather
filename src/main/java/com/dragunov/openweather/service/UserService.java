@@ -1,7 +1,7 @@
 package com.dragunov.openweather.service;
 
-import com.dragunov.openweather.repository.SessionRepository;
-import com.dragunov.openweather.repository.UserRepository;
+import com.dragunov.openweather.DAO.SessionRepository;
+import com.dragunov.openweather.DAO.UserRepository;
 import com.dragunov.openweather.exceptions.auth.*;
 import com.dragunov.openweather.models.Sessions;
 import com.dragunov.openweather.models.User;
@@ -46,6 +46,7 @@ public class UserService {
             ,LoginTooShortException, PasswordTooShortException, PasswordsNotEqualsException {
         if (userRepository.getUser(login).isPresent()) {
             throw new ThisUserAlreadyRegisteredException("this user already registered");
+            //race conditional
         }
         Validator.checkLengthLogin(login);
         Validator.checkLengthPassword(firstPassword);

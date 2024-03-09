@@ -14,6 +14,8 @@ import lombok.*;
 public class LocationDTO {
     @JsonProperty("name")
     private String name;
+    @JsonProperty("country")
+    private String country;
     @JsonProperty("lat")
     private Double latitude;
     @JsonProperty("lon")

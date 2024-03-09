@@ -1,6 +1,6 @@
 package com.dragunov.openweather.servlets.auth;
 
-import com.dragunov.openweather.repository.UserRepository;
+import com.dragunov.openweather.DAO.UserRepository;
 import com.dragunov.openweather.exceptions.auth.LoginTooShortException;
 import com.dragunov.openweather.exceptions.auth.PasswordTooShortException;
 import com.dragunov.openweather.exceptions.auth.PasswordsNotEqualsException;
@@ -18,7 +18,7 @@ import org.thymeleaf.context.WebContext;
 
 import java.io.IOException;
 @Slf4j
-@WebServlet(name="Register", value = "/register")
+@WebServlet(name="RegisterServlet", value = "/register")
 public class RegisterController extends HttpServlet {
     private ITemplateEngine templateEngine;
     private WebContext context;
@@ -36,7 +36,8 @@ public class RegisterController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
-        templateEngine.process("register", context, resp.getWriter());
+        context.setVariable("contextPath", req.getContextPath());
+        templateEngine.process("Register", context, resp.getWriter());
     }
 
     @Override
@@ -58,20 +59,20 @@ public class RegisterController extends HttpServlet {
             }
         } catch (ThisUserAlreadyRegisteredException e) {
             log.error("This user already registered");
-            context.setVariable("loginAlready", "This login already registered");
-            templateEngine.process("register", context, resp.getWriter());
+            context.setVariable("errorLogin", "This login already registered");
+            templateEngine.process("Register", context, resp.getWriter());
         } catch (PasswordsNotEqualsException e) {
             log.error("passwords is not equals");
-            context.setVariable("passwordNotEq", "Passwords is not equals");
-            templateEngine.process("register", context, resp.getWriter());
+            context.setVariable("errorPassword", "Passwords is not equals");
+            templateEngine.process("Register", context, resp.getWriter());
         } catch (LoginTooShortException e) {
             log.error("Login too short");
-            context.setVariable("loginTooShort", "Login too short");
-            templateEngine.process("register", context, resp.getWriter());
+            context.setVariable("errorLogin", "Login too short");
+            templateEngine.process("Register", context, resp.getWriter());
         } catch (PasswordTooShortException e) {
             log.error("Password too short");
-            context.setVariable("passwordTooShort", "Password too short");
-            templateEngine.process("register", context, resp.getWriter());
+            context.setVariable("errorPassword", "Password too short");
+            templateEngine.process("Register", context, resp.getWriter());
         }
     }
 }

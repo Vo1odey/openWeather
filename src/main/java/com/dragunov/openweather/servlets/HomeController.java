@@ -1,7 +1,11 @@
 package com.dragunov.openweather.servlets;
 
-import com.dragunov.openweather.repository.LocationRepository;
-import com.dragunov.openweather.repository.SessionRepository;
+import com.dragunov.openweather.DAO.LocationRepository;
+import com.dragunov.openweather.DAO.SessionRepository;
+import com.dragunov.openweather.exceptions.api.ApiKeyException;
+import com.dragunov.openweather.exceptions.api.BadRequestException;
+import com.dragunov.openweather.exceptions.api.CallsPerMinuteException;
+import com.dragunov.openweather.exceptions.api.LocationInfoException;
 import com.dragunov.openweather.models.Location;
 import com.dragunov.openweather.models.User;
 import com.dragunov.openweather.service.ApiService;
@@ -26,13 +30,13 @@ import java.util.List;
 
 
 @Slf4j
-@WebServlet(name = "AccountPage", value = "/home")
+@WebServlet(name = "Home", value = "/home")
 public class HomeController extends HttpServlet {
     private ApiService apiService;
     private SessionRepository sessionRepository;
     private ITemplateEngine templateEngine;
     private LocationRepository locationRepository;
-    private WebContext context;
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         apiService = (ApiService) config.getServletContext().getAttribute("apiService");
@@ -44,7 +48,7 @@ public class HomeController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
+        WebContext context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
         Cookie[] cookies = req.getCookies();
         String userID = "1";
         for (Cookie cookie : cookies) {
@@ -60,24 +64,27 @@ public class HomeController extends HttpServlet {
             ArrayList<WeatherDTO> locationsWeathers = new ArrayList<>();
             for (Location location : locations) {
                 WeatherDTO weatherDTO = apiService.getLocationByLonLat(location.getLatitude(), location.getLongitude());
-                Double temperature = weatherDTO.getTemperature().getTemperature();
-                Double celsiusTemperature = apiService.conversionToCelsius(temperature);
-                weatherDTO.getTemperature().setTemperature(celsiusTemperature);
+                Double temperatureMax = weatherDTO.getTemperature().getTempMax();
+                Double temperatureMin = weatherDTO.getTemperature().getTempMin();
+                Double celsiusTemperatureMax = apiService.conversionToCelsius(temperatureMax);
+                Double celsiusTemperatureMin = apiService.conversionToCelsius(temperatureMin);
+                weatherDTO.getTemperature().setTempMax(celsiusTemperatureMax);
+                weatherDTO.getTemperature().setTempMin(celsiusTemperatureMin);
                 locationsWeathers.add(weatherDTO);
             }
+            context.setVariable("contextPath", req.getContextPath());
             context.setVariable("locationsWeathers", locationsWeathers);
-            templateEngine.process("accountPage", context, resp.getWriter());
+            templateEngine.process("Home", context, resp.getWriter());
         } catch (URISyntaxException | InterruptedException e) {
             throw new RuntimeException(e);
+        } catch (BadRequestException | LocationInfoException | ApiKeyException | CallsPerMinuteException e) {
+            context.setVariable("locationPercentError", "bad request");
+            templateEngine.process("Search", context, resp.getWriter());
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        log.info("post");
-        context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
-        String ls = (String) req.getParameter("signOut");
-        log.error(ls);
         Cookie[] cookies = req.getCookies();
         String userID = "1";
         for (Cookie cookie : cookies) {
@@ -86,19 +93,8 @@ public class HomeController extends HttpServlet {
                 break;
             }
         }
-        Cookie userCookie;
-        if (req.getParameter("signOut") != null) {
-            log.info("remove session");
-            sessionRepository.removeSessionById(userID);
-            userCookie = new Cookie("UUID", "");
-            userCookie.setMaxAge(0);
-            resp.addCookie(userCookie);
-            log.info("remove cookie");
-            resp.sendRedirect("/openWeather");
-        }
         double longitude = 0;
         double latitude = 0;
-
         if (req.getParameter("longitude") != null) {
             longitude = Double.parseDouble(req.getParameter("longitude"));
         }
@@ -110,7 +106,7 @@ public class HomeController extends HttpServlet {
             if ((longitude != 0) && (latitude != 0)) {
                 log.info("removing location");
                 locationRepository.removeLocation(longitude, latitude, user);
-                resp.sendRedirect("/home");
+                resp.sendRedirect(req.getContextPath() + "/home");
             }
         }
     }

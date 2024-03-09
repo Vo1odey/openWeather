@@ -1,13 +1,18 @@
 package com.dragunov.openweather.servlets;
 
-import com.dragunov.openweather.repository.LocationRepository;
-import com.dragunov.openweather.repository.SessionRepository;
+import com.dragunov.openweather.DAO.LocationRepository;
+import com.dragunov.openweather.DAO.SessionRepository;
+import com.dragunov.openweather.exceptions.api.ApiKeyException;
+import com.dragunov.openweather.exceptions.api.BadRequestException;
+import com.dragunov.openweather.exceptions.api.CallsPerMinuteException;
+import com.dragunov.openweather.exceptions.api.LocationInfoException;
 import com.dragunov.openweather.models.Location;
 import com.dragunov.openweather.models.User;
 import com.dragunov.openweather.service.ApiService;
 import com.dragunov.openweather.service.modelapi.LocationDTO;
 import com.dragunov.openweather.service.modelapi.WeatherDTO;
 import com.dragunov.openweather.utils.ThymeleafUtil;
+import com.dragunov.openweather.utils.Validator;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,6 +30,7 @@ import java.util.ArrayList;
 
 @Slf4j
 @WebServlet(name = "searchPage", value = "/search/*")
+//adding /search at for each search location
 public class SearchController extends HttpServlet {
     private ITemplateEngine templateEngine;
     private WebContext context;
@@ -40,25 +46,23 @@ public class SearchController extends HttpServlet {
         super.init(config);
     }
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
-            log.info("get search");
             context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
-            String locationName = req.getParameter("q");
-            ArrayList<LocationDTO> locationsNames = (ArrayList<LocationDTO>) apiService.getAvailableLocationNames(locationName);
+            context.setVariable("contextPath", req.getContextPath());
+            String validCityName = Validator.spaceReplacePlusForApi(req.getParameter("q"));
+            ArrayList<LocationDTO> locationsNames = (ArrayList<LocationDTO>) apiService.getAvailableLocationNames(validCityName);
             context.setVariable("locations", locationsNames);
-
-            templateEngine.process("search", context, resp.getWriter());
-
-
+            templateEngine.process("Search", context, resp.getWriter());
         } catch (URISyntaxException | InterruptedException e) {
             throw new RuntimeException(e);
+        } catch (BadRequestException | LocationInfoException | ApiKeyException | CallsPerMinuteException e) {
+            context.setVariable("locationPercentError", "bad request");
+            templateEngine.process("Search", context, resp.getWriter());
         }
     }
-
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        log.info("post search");
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
         Double longitude = Double.parseDouble(req.getParameter("longitude"));
         Double latitude = Double.parseDouble(req.getParameter("latitude"));
@@ -72,21 +76,22 @@ public class SearchController extends HttpServlet {
         }
         User currentUser = sessionRepository.getSessions(userID).get().getUser();
         try {
-
             WeatherDTO desiredLocation = apiService.getLocationByLonLat(latitude, longitude);
             Location locationForCurrentUser = new Location(desiredLocation.getName()
                     ,desiredLocation.getCoordinates().getLatitude()
                     ,desiredLocation.getCoordinates().getLongitude());
-            locationRepository.saveLocation(currentUser, locationForCurrentUser);
-
-
-
-            resp.sendRedirect("/home");
-//            templateEngine.process("accountPage", context, resp.getWriter());
+            if (locationRepository.getLocation(currentUser, locationForCurrentUser).isEmpty()){
+                locationRepository.saveLocation(currentUser, locationForCurrentUser);
+                resp.sendRedirect(req.getContextPath() + "/home");
+            } else if (locationRepository.getLocation(currentUser, locationForCurrentUser).isPresent()){
+                context.setVariable("locationPercentError", "this location already using for this user");
+                templateEngine.process("Search", context, resp.getWriter());
+            }
         } catch (URISyntaxException | InterruptedException e) {
             throw new RuntimeException(e);
+        } catch (BadRequestException | LocationInfoException | ApiKeyException | CallsPerMinuteException e) {
+            context.setVariable("locationPercentError", "bad request");
+            templateEngine.process("Search", context, resp.getWriter());
         }
-
-
     }
 }

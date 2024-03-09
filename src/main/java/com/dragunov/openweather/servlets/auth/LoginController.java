@@ -17,7 +17,7 @@ import org.thymeleaf.context.WebContext;
 
 import java.io.IOException;
 @Slf4j
-@WebServlet(name="Login", value = "/openWeather")
+@WebServlet(name="Login", value = "/login")
 public class LoginController extends HttpServlet {
     private ITemplateEngine templateEngine;
     private WebContext context;
@@ -32,7 +32,8 @@ public class LoginController extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
-        templateEngine.process("signIn", context, resp.getWriter());
+        context.setVariable("contextPath", req.getContextPath());
+        templateEngine.process("Login", context, resp.getWriter());
     }
 
     @Override
@@ -49,11 +50,11 @@ public class LoginController extends HttpServlet {
         } catch (UserNotFoundException | LoginTooShortException e) {
             log.error("This user not found");
             context.setVariable("errorLogin", "invalid login");
-            templateEngine.process("signIn", context, resp.getWriter());
+            templateEngine.process("Login", context, resp.getWriter());
         } catch (InvalidPasswordException | PasswordTooShortException e) {
             log.error("Invalid password ");
             context.setVariable("errorPassword", "invalid password");
-            templateEngine.process("signIn", context, resp.getWriter());
+            templateEngine.process("Login", context, resp.getWriter());
         }
     }
 }

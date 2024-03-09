@@ -1,6 +1,6 @@
 package com.dragunov.openweather.servlets.filters;
 
-import com.dragunov.openweather.repository.SessionRepository;
+import com.dragunov.openweather.DAO.SessionRepository;
 import com.dragunov.openweather.exceptions.auth.CookiesNotFoundException;
 import com.dragunov.openweather.exceptions.auth.SessionTimeOutException;
 import com.dragunov.openweather.exceptions.auth.UserIdFromCookiesNotFoundException;
@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Slf4j
-@WebFilter (filterName = "LoginFilter", urlPatterns = {"/openWeather", "/register"})
+@WebFilter (filterName = "LoginFilter", urlPatterns = {"/login", "/register"})
 public class LoginFilter implements Filter {
     private SessionRepository sessionRepository;
     @Override
@@ -38,7 +38,7 @@ public class LoginFilter implements Filter {
                     LocalDateTime currentTime = LocalDateTime.now();
                     if (Validator.isSessionTimeInvalid(timeFromSession, currentTime)) {
                         log.info("done, redirect to home page");
-                        httpResponse.sendRedirect("/home");
+                        httpResponse.sendRedirect(httpRequest.getContextPath() + "/home");
                     }
                 } else {
                     chain.doFilter(request, response);

@@ -1,8 +1,8 @@
 package com.dragunov.openweather.servlets;
 
-import com.dragunov.openweather.repository.LocationRepository;
-import com.dragunov.openweather.repository.SessionRepository;
-import com.dragunov.openweather.repository.UserRepository;
+import com.dragunov.openweather.DAO.LocationRepository;
+import com.dragunov.openweather.DAO.SessionRepository;
+import com.dragunov.openweather.DAO.UserRepository;
 import com.dragunov.openweather.service.ApiService;
 import com.dragunov.openweather.service.UserService;
 import com.dragunov.openweather.utils.HibernateUtil;

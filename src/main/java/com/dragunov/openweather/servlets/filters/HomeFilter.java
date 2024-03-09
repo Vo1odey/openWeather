@@ -1,6 +1,6 @@
 package com.dragunov.openweather.servlets.filters;
 
-import com.dragunov.openweather.repository.SessionRepository;
+import com.dragunov.openweather.DAO.SessionRepository;
 import com.dragunov.openweather.exceptions.auth.CookiesNotFoundException;
 import com.dragunov.openweather.exceptions.auth.SessionTimeOutException;
 import com.dragunov.openweather.exceptions.auth.UserIdFromCookiesNotFoundException;
@@ -42,18 +42,18 @@ public class HomeFilter implements Filter {
                     }
                 } else {
                     log.warn("session not found");
-                    httpResponse.sendRedirect("/openWeather");
+                    httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
                 }
             }
         } catch (UserIdFromCookiesNotFoundException | CookiesNotFoundException e) {
             log.warn("Cookies not found -> login page");
-            httpResponse.sendRedirect("/openWeather");
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
         } catch (SessionTimeOutException e) {
             log.warn("Session time out exception");
             log.info("user id from cookies = {}", userIdFromCookies);
             sessionRepository.removeSessionById(userIdFromCookies);
             httpResponse.addCookie(removeCookie());
-            httpResponse.sendRedirect("/openWeather");
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
         }
     }
     private Cookie findUserIdFromCookies(Cookie[] cookies) throws UserIdFromCookiesNotFoundException {
