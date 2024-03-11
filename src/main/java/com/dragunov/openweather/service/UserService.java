@@ -46,7 +46,6 @@ public class UserService {
             ,LoginTooShortException, PasswordTooShortException, PasswordsNotEqualsException {
         if (userRepository.getUser(login).isPresent()) {
             throw new ThisUserAlreadyRegisteredException("this user already registered");
-            //race conditional
         }
         Validator.checkLengthLogin(login);
         Validator.checkLengthPassword(firstPassword);
