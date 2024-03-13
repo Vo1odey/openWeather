@@ -5,7 +5,25 @@ CREATE TABLE Locations (
     Latitude decimal NOT NULL,
     Longitude decimal  NOT NULL
 );
+-- **************
+CREATE TABLE IF NOT EXISTS public.locations
+(
+    id integer NOT NULL DEFAULT nextval('locations_id_seq'::regclass),
+    latitude double precision,
+    longitude double precision,
+    name character varying(255) COLLATE pg_catalog."default",
+    userid integer,
+    CONSTRAINT locations_pkey PRIMARY KEY (id),
+    CONSTRAINT constraint_user_location FOREIGN KEY (userid)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
 
+    TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.locations
+    OWNER to postgres;
 
 /*
 

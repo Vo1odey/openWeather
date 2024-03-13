@@ -15,13 +15,17 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class ApiService {
@@ -31,38 +35,26 @@ public class ApiService {
     private final String URL_FIND_LOCATION_BY_LOT_LAN = "https://api.openweathermap.org/data/2.5/weather";
     public WeatherDTO getWeatherByName(String name) throws URISyntaxException, IOException
             , InterruptedException, ApiKeyException, LocationInfoException, BadRequestException, CallsPerMinuteException{
-        HttpRequest request = HttpRequest.newBuilder(new URI(URL_FIND_LOCATION_BY_NAME
-                + "?q=" + name
-                + "&appid=" + KEY)).GET().build();
-        HttpClient client = HttpClient.newBuilder().build();
-        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        checkResponseCode(response);
+        Map <String, String> params = new HashMap<>();
+        params.put("q", name);
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(response.body(), WeatherDTO.class);
+        return objectMapper.readValue(buildHttpClient(URL_FIND_LOCATION_BY_NAME, params, KEY), WeatherDTO.class);
     }
     public List<LocationDTO> getAvailableLocationNames(String name) throws URISyntaxException, IOException
             , InterruptedException, ApiKeyException, LocationInfoException, BadRequestException, CallsPerMinuteException{
-        HttpRequest request = HttpRequest.newBuilder(new URI(URL_FIND_LOCATIONS_BY_NAMES
-                + "?q=" + name
-                + "&limit=" + "5"
-                + "&appid=" + KEY)).GET().build();
-        HttpClient client = HttpClient.newBuilder().build();
-        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        checkResponseCode(response);
+        Map <String, String> params = new HashMap<>();
+        params.put("q", name);
+        params.put("limit", "5");
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(response.body(), new TypeReference<ArrayList<LocationDTO>>() {});
+        return objectMapper.readValue(buildHttpClient(URL_FIND_LOCATIONS_BY_NAMES, params, KEY), new TypeReference<ArrayList<LocationDTO>>() {});
     }
     public WeatherDTO getLocationByLonLat(Double latitude, Double longitude) throws URISyntaxException, IOException
             , InterruptedException, ApiKeyException, LocationInfoException, BadRequestException, CallsPerMinuteException {
-        HttpRequest request = HttpRequest.newBuilder(new URI(URL_FIND_LOCATION_BY_LOT_LAN
-                + "?lat=" + latitude
-                + "&lon=" + longitude
-                + "&appid=" + KEY)).GET().build();
-        HttpClient client = HttpClient.newBuilder().build();
-        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        checkResponseCode(response);
+        Map <String, String> params = new HashMap<>();
+        params.put("lat", String.valueOf(latitude));
+        params.put("lon", String.valueOf(longitude));
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(response.body(), WeatherDTO.class);
+        return objectMapper.readValue(buildHttpClient(URL_FIND_LOCATION_BY_LOT_LAN, params, KEY), WeatherDTO.class);
     }
 
     public void checkResponseCode(HttpResponse response) throws ApiKeyException, LocationInfoException
@@ -84,6 +76,24 @@ public class ApiService {
             log.error("bad request");
             throw new BadRequestException("400 bad request");
         }
+    }
+    public String buildHttpClient(String baseURL, Map<String, String> params, String appid) throws URISyntaxException, IOException, InterruptedException, ApiKeyException, LocationInfoException {
+        params.put("appid", appid);
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            if (builder.length() > 0) {
+                builder.append("&");
+            }
+            builder.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8)).append("=")
+                    .append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
+        }
+        String paramFromMap = builder.toString();
+        URI uri = new URI(baseURL + "?" + paramFromMap);
+        HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
+        HttpClient client = HttpClient.newBuilder().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        checkResponseCode(response);
+        return response.body();
     }
     public Double conversionToCelsius(Double temperature) {
         BigDecimal value = BigDecimal.valueOf(273.15);
