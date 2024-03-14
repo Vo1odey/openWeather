@@ -11,6 +11,7 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
+import org.flywaydb.core.Flyway;
 import org.thymeleaf.TemplateEngine;
 
 @WebListener
@@ -20,6 +21,9 @@ public class ContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        Flyway flyway = Flyway.configure().baselineOnMigrate(true).dataSource("jdbc:postgresql://db:5432/open_weather"
+                ,"postgres", "postgres").load();
+        flyway.migrate();
         ServletContext context = sce.getServletContext();
         UserRepository userRepository = new UserRepository(HibernateUtil.getSessionFactory());
         context.setAttribute("userRepository", userRepository);

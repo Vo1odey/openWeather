@@ -1,14 +1,11 @@
 package com.dragunov.test;
 
-import com.dragunov.openweather.DAO.LocationRepository;
-import com.dragunov.openweather.DAO.UserRepository;
 import com.dragunov.openweather.exceptions.api.ApiKeyException;
 import com.dragunov.openweather.exceptions.api.BadRequestException;
 import com.dragunov.openweather.exceptions.api.LocationInfoException;
 import com.dragunov.openweather.service.ApiService;
 import com.dragunov.openweather.service.modelapi.LocationDTO;
 import com.dragunov.openweather.service.modelapi.WeatherDTO;
-import com.dragunov.utils.HibernateUtilTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

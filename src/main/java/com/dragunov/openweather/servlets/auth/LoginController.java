@@ -12,6 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import lombok.extern.slf4j.Slf4j;
+import org.flywaydb.core.Flyway;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
