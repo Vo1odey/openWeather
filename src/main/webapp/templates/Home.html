@@ -15,7 +15,7 @@
   <body>
     <nav id="main_container" class="navbar navbar-dark bg-primary">
       <div class="container-fluid">
-        <a class="navbar-brand">Weather</a>
+        <a th:href="@{/home}" class="navbar-brand">Weather</a>
         <form th:action="@{/search/}" class="d-flex" method="get">
           <input name="q"
                  class="form-control me-2"
