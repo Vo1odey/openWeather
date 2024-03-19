@@ -1,15 +1,12 @@
 package com.dragunov.openweather.servlets;
 
-import com.dragunov.openweather.DAO.LocationRepository;
-import com.dragunov.openweather.DAO.SessionRepository;
-import com.dragunov.openweather.exceptions.api.ApiKeyException;
-import com.dragunov.openweather.exceptions.api.BadRequestException;
-import com.dragunov.openweather.exceptions.api.CallsPerMinuteException;
-import com.dragunov.openweather.exceptions.api.LocationInfoException;
+import com.dragunov.openweather.exceptions.api.*;
+import com.dragunov.openweather.repository.LocationRepository;
+import com.dragunov.openweather.repository.SessionRepository;
 import com.dragunov.openweather.models.Location;
 import com.dragunov.openweather.models.User;
 import com.dragunov.openweather.service.ApiService;
-import com.dragunov.openweather.service.modelapi.WeatherDTO;
+import com.dragunov.openweather.service.dto.WeatherDTO;
 import com.dragunov.openweather.utils.ThymeleafUtil;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -32,9 +29,13 @@ import java.util.List;
 @Slf4j
 @WebServlet(name = "Home", value = "/home")
 public class HomeController extends HttpServlet {
+
     private ApiService apiService;
+
     private SessionRepository sessionRepository;
+
     private ITemplateEngine templateEngine;
+
     private LocationRepository locationRepository;
 
     @Override
@@ -60,24 +61,13 @@ public class HomeController extends HttpServlet {
         try {
             User currentUser = sessionRepository.getSessions(userID).get().getUser();
             context.setVariable("login", currentUser.getLogin());
-            List<Location> locations = currentUser.getLocations();
-            ArrayList<WeatherDTO> locationsWeathers = new ArrayList<>();
-            for (Location location : locations) {
-                WeatherDTO weatherDTO = apiService.getLocationByLonLat(location.getLatitude(), location.getLongitude());
-                Double temperatureMax = weatherDTO.getTemperature().getTempMax();
-                Double temperatureMin = weatherDTO.getTemperature().getTempMin();
-                Double celsiusTemperatureMax = apiService.conversionToCelsius(temperatureMax);
-                Double celsiusTemperatureMin = apiService.conversionToCelsius(temperatureMin);
-                weatherDTO.getTemperature().setTempMax(celsiusTemperatureMax);
-                weatherDTO.getTemperature().setTempMin(celsiusTemperatureMin);
-                locationsWeathers.add(weatherDTO);
-            }
+            List<WeatherDTO> locationsWeathers = apiService.getAllUserWeatherToDisplay(currentUser);
             context.setVariable("contextPath", req.getContextPath());
             context.setVariable("locationsWeathers", locationsWeathers);
             templateEngine.process("Home", context, resp.getWriter());
         } catch (URISyntaxException | InterruptedException e) {
             throw new RuntimeException(e);
-        } catch (BadRequestException | LocationInfoException | ApiKeyException | CallsPerMinuteException e) {
+        } catch (BadRequestException | LocationInfoException | ApiKeyException | CallsPerMinuteException | LocationNotFoundException e) {
             context.setVariable("locationPercentError", "bad request");
             templateEngine.process("Search", context, resp.getWriter());
         }

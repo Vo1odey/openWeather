@@ -1,7 +1,7 @@
 package com.dragunov.test;
 
-import com.dragunov.openweather.DAO.SessionRepository;
-import com.dragunov.openweather.DAO.UserRepository;
+import com.dragunov.openweather.repository.SessionRepository;
+import com.dragunov.openweather.repository.UserRepository;
 import com.dragunov.openweather.exceptions.auth.*;
 import com.dragunov.openweather.models.Sessions;
 import com.dragunov.openweather.models.User;

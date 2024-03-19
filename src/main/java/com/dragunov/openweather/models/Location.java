@@ -24,7 +24,7 @@ public class Location {
 
     @ManyToOne()
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    @JoinColumn(name = "userid")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "latitude")

@@ -1,6 +1,6 @@
 package com.dragunov.openweather.servlets.auth;
 
-import com.dragunov.openweather.DAO.UserRepository;
+import com.dragunov.openweather.repository.UserRepository;
 import com.dragunov.openweather.exceptions.auth.LoginTooShortException;
 import com.dragunov.openweather.exceptions.auth.PasswordTooShortException;
 import com.dragunov.openweather.exceptions.auth.PasswordsNotEqualsException;
@@ -20,9 +20,13 @@ import java.io.IOException;
 @Slf4j
 @WebServlet(name="RegisterServlet", value = "/register")
 public class RegisterController extends HttpServlet {
+
     private ITemplateEngine templateEngine;
+
     private WebContext context;
+
     private UserService userService;
+
     private UserRepository userRepository;
 
     @Override
@@ -43,13 +47,13 @@ public class RegisterController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
-        String login = req.getParameter("login");
-        String firstPassword = req.getParameter("firstPassword");
-        String secondPassword = req.getParameter("secondPassword");
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
+        String confirmPassword = req.getParameter("confirmPassword");
         try {
-            userService.signUp(login, firstPassword, secondPassword);
-            if (userRepository.getUser(login).isPresent()) {
-                User user = userRepository.getUser(login).get();
+            userService.signUp(email, password, confirmPassword);
+            if (userRepository.getUser(email).isPresent()) {
+                User user = userRepository.getUser(email).get();
                 Cookie userCookie = new Cookie("UUID", user.getSessions().get(0).getId());
                 userCookie.setMaxAge(-1);
                 resp.addCookie(userCookie);
@@ -67,11 +71,11 @@ public class RegisterController extends HttpServlet {
             templateEngine.process("Register", context, resp.getWriter());
         } catch (LoginTooShortException e) {
             log.error("Login too short");
-            context.setVariable("errorLogin", "Login too short");
+            context.setVariable("errorLogin", "Email too short");
             templateEngine.process("Register", context, resp.getWriter());
         } catch (PasswordTooShortException e) {
             log.error("Password too short");
-            context.setVariable("errorPassword", "Password too short");
+            context.setVariable("errorPassword", "Password length < 6");
             templateEngine.process("Register", context, resp.getWriter());
         }
     }

@@ -1,6 +1,6 @@
 package com.dragunov.openweather.servlets.filters;
 
-import com.dragunov.openweather.DAO.SessionRepository;
+import com.dragunov.openweather.repository.SessionRepository;
 import com.dragunov.openweather.exceptions.auth.CookiesNotFoundException;
 import com.dragunov.openweather.exceptions.auth.SessionTimeOutException;
 import com.dragunov.openweather.exceptions.auth.UserIdFromCookiesNotFoundException;

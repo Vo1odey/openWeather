@@ -1,4 +1,4 @@
-package com.dragunov.openweather.DAO;
+package com.dragunov.openweather.repository;
 
 import com.dragunov.openweather.models.Location;
 import com.dragunov.openweather.models.User;
@@ -38,6 +38,7 @@ public class LocationRepository {
             }
         }
     }
+
     public Optional<Location> getLocation(User user, Location location) {
         Transaction tx = null;
         log.info("Start get location <- {} ", location.getName());
@@ -59,6 +60,7 @@ public class LocationRepository {
             return Optional.empty();
         }
     }
+
     public void removeLocation(Double longitude, Double latitude, User user) {
         Transaction tx = null;
         log.info("Start remove user {} -> ", user.getLogin());
@@ -78,6 +80,7 @@ public class LocationRepository {
             }
         }
     }
+
     public List<Location> index(User user) {
         Transaction tx = null;
         log.info("Start index user <- [] <- {} ", user.getLogin());

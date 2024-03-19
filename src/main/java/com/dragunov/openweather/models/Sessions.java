@@ -11,19 +11,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "sessions", schema = "public", catalog = "open_weather")
+@Table(name = "sessions", schema = "public", catalog = "open_weather", indexes = {@Index(name = "expire_at_index", columnList = "expires_at")})
 public class Sessions {
 
     @Id
-    @Column(name = "id")
     private String id;
 
     @ManyToOne()
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    @JoinColumn(name = "userid")
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "expiresat")
+    @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 
     public Sessions(String id, LocalDateTime expiresAt) {

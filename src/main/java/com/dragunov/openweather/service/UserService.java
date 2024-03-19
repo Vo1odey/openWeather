@@ -1,7 +1,7 @@
 package com.dragunov.openweather.service;
 
-import com.dragunov.openweather.DAO.SessionRepository;
-import com.dragunov.openweather.DAO.UserRepository;
+import com.dragunov.openweather.repository.SessionRepository;
+import com.dragunov.openweather.repository.UserRepository;
 import com.dragunov.openweather.exceptions.auth.*;
 import com.dragunov.openweather.models.Sessions;
 import com.dragunov.openweather.models.User;
@@ -16,7 +16,6 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
-
 
     public UserService(UserRepository userRepository, SessionRepository sessionRepository){
         this.userRepository = userRepository;
@@ -42,6 +41,7 @@ public class UserService {
             throw new InvalidPasswordException("invalid password");
         }
     }
+
     public void signUp(String login, String firstPassword, String secondPassword) throws ThisUserAlreadyRegisteredException
             ,LoginTooShortException, PasswordTooShortException, PasswordsNotEqualsException {
         if (userRepository.getUser(login).isPresent()) {
@@ -58,6 +58,7 @@ public class UserService {
             throw new PasswordsNotEqualsException("passwords not equals");
         }
     }
+
     private void createNewSession(String login){
         int sessionTime = 15;
         String uuid = String.valueOf(UUID.randomUUID());

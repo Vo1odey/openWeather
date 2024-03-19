@@ -20,9 +20,13 @@ import java.io.IOException;
 @Slf4j
 @WebServlet(name="Login", value = "/login")
 public class LoginController extends HttpServlet {
+
     private ITemplateEngine templateEngine;
+
     private WebContext context;
+
     private UserService userService;
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         userService = (UserService) config.getServletContext().getAttribute("userService");

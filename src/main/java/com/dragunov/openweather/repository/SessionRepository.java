@@ -1,4 +1,4 @@
-package com.dragunov.openweather.DAO;
+package com.dragunov.openweather.repository;
 
 import com.dragunov.openweather.models.Sessions;
 import com.dragunov.openweather.models.User;
@@ -34,6 +34,7 @@ public class SessionRepository {
             }
         }
     }
+
     public Optional<Sessions> getSessions(String sessionID) {
         Transaction tx = null;
         log.info("Start get session <- {} ", sessionID);
@@ -53,6 +54,7 @@ public class SessionRepository {
             return Optional.empty();
         }
     }
+
     public void removeSession(User user) {
         Transaction tx = null;
         log.info("Start remove session {} -> ", user.getLogin());

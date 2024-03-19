@@ -56,6 +56,7 @@
           </div>
         </div>
         <ul class="list-group list-group-flush">
+          <li class="list-group-item" th:text="'Country: ' + ${weather.getCountry().getCountry()}">Country</li>
           <li class="list-group-item" th:text="'Temperature max: ' + ${weather.getTemperature().getTempMax()}">temperature max</li>
           <li class="list-group-item" th:text="'Temperature min: ' + ${weather.getTemperature().getTempMin()}">temperature min</li>
           <li class="list-group-item" th:text="'Humidity: ' + ${weather.getTemperature().getHumidity()} + '%'">humidity</li>

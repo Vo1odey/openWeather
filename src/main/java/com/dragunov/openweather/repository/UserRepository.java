@@ -1,4 +1,4 @@
-package com.dragunov.openweather.DAO;
+package com.dragunov.openweather.repository;
 
 import com.dragunov.openweather.models.User;
 import jakarta.persistence.PersistenceException;
@@ -29,6 +29,7 @@ public class UserRepository {
             }
         }
     }
+
     public Optional<User> getUser(String login) {
         Transaction tx = null;
         log.info("Start get user <- {} ", login);
@@ -48,6 +49,7 @@ public class UserRepository {
             return Optional.empty();
         }
     }
+
     public void removeUser(User user) {
         Transaction tx = null;
         log.info("Start remove user {} -> ", user.getLogin());

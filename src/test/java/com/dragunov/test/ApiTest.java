@@ -3,9 +3,10 @@ package com.dragunov.test;
 import com.dragunov.openweather.exceptions.api.ApiKeyException;
 import com.dragunov.openweather.exceptions.api.BadRequestException;
 import com.dragunov.openweather.exceptions.api.LocationInfoException;
+import com.dragunov.openweather.exceptions.api.LocationNotFoundException;
 import com.dragunov.openweather.service.ApiService;
-import com.dragunov.openweather.service.modelapi.LocationDTO;
-import com.dragunov.openweather.service.modelapi.WeatherDTO;
+import com.dragunov.openweather.service.dto.LocationDTO;
+import com.dragunov.openweather.service.dto.WeatherDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -233,7 +234,7 @@ public class ApiTest {
     static void initializedTestObject() throws NoSuchMethodException, URISyntaxException, IOException, InterruptedException, ApiKeyException, LocationInfoException {
     }
     @Test
-    void must_WriteItDownCurrentLocationByNameToWeatherDTO() throws ApiKeyException, LocationInfoException, URISyntaxException, IOException, InterruptedException {
+    void must_WriteItDownCurrentLocationByNameToWeatherDTO() throws ApiKeyException, LocationInfoException, URISyntaxException, IOException, InterruptedException, LocationNotFoundException {
         String url = "https://api.openweathermap.org/data/2.5/weather";
         HashMap<String, String> param = new HashMap<>();
         param.put("q", "Cherepovets");
@@ -244,7 +245,7 @@ public class ApiTest {
         Assertions.assertNotNull(weatherDTO);
     }
     @Test
-    void must_WriteItDownLocationsNamesToList() throws ApiKeyException, LocationInfoException, URISyntaxException, IOException, InterruptedException {
+    void must_WriteItDownLocationsNamesToList() throws ApiKeyException, LocationInfoException, URISyntaxException, IOException, InterruptedException, LocationNotFoundException {
         String url = "https://api.openweathermap.org/geo/1.0/direct";
         HashMap<String, String> param = new HashMap<>();
         param.put("q", "Moscow");
@@ -256,7 +257,7 @@ public class ApiTest {
         Assertions.assertEquals("Moskow", locationsDTO.get(1).getName());
     }
     @Test
-    void must_GetLocationByLongitudeAndLatitude() throws ApiKeyException, LocationInfoException, URISyntaxException, IOException, InterruptedException {
+    void must_GetLocationByLongitudeAndLatitude() throws ApiKeyException, LocationInfoException, URISyntaxException, IOException, InterruptedException, LocationNotFoundException {
         String url = "https://api.openweathermap.org/data/2.5/weather";
         Map<String, String> param = new HashMap<>();
         param.put("lon", "37.9");

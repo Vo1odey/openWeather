@@ -14,19 +14,18 @@ import java.util.List;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "users", schema = "public", catalog = "open_weather")
+@Table(name = "users", schema = "public", catalog = "open_weather", indexes = {@Index(name = "login_index", columnList = "login")})
 
 public class User {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "login", unique = true, length = 64)
+    @Column(name = "login", unique = true, nullable = false, length = 64)
     private String login;
 
-    @Column(name = "password", length = 64)
+    @Column(name = "password", nullable = false, length = 64)
     private String password;
 
     @OneToMany(fetch = FetchType.LAZY

@@ -1,6 +1,6 @@
 package com.dragunov.openweather.servlets.auth;
 
-import com.dragunov.openweather.DAO.SessionRepository;
+import com.dragunov.openweather.repository.SessionRepository;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,6 +14,7 @@ import java.io.IOException;
 @Slf4j
 @WebServlet(name = "SignOut", urlPatterns = "/sign-out")
 public class SignOutController extends HttpServlet {
+
     private SessionRepository sessionRepository;
 
     @Override

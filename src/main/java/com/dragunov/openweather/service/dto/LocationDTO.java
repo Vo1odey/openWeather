@@ -1,4 +1,4 @@
-package com.dragunov.openweather.service.modelapi;
+package com.dragunov.openweather.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,12 +12,19 @@ import lombok.*;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LocationDTO {
+
     @JsonProperty("name")
     private String name;
+
     @JsonProperty("country")
     private String country;
+
     @JsonProperty("lat")
     private Double latitude;
+
     @JsonProperty("lon")
     private Double longitude;
+
+    @JsonProperty("state")
+    private String state;
 }

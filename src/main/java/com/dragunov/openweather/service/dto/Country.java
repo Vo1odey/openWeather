@@ -1,4 +1,4 @@
-package com.dragunov.openweather.service.modelapi;
+package com.dragunov.openweather.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +10,8 @@ import lombok.*;
 @NoArgsConstructor
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Wind {
-    @JsonProperty("speed")
-    int speed;
+public class Country {
+
+    @JsonProperty("country")
+    String country;
 }
